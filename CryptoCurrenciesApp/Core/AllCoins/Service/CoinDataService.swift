@@ -1,0 +1,66 @@
+//
+//  CoinDataService.swift
+//  CryptoCurrenciesApp
+//
+//  Created by Denis Makarau on 24.10.25.
+//
+
+import Foundation
+
+
+class CoinDataService {
+    private let urlString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&sparkline=false&price_change_percentage=24h"
+    
+    func fetchCoins(completion: @escaping ([Coin]) -> Void) {
+        guard let url = URL(string: urlString) else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data else { return }
+            let datastring = String(data: data, encoding: .utf8)
+            
+            guard let coins = try? JSONDecoder().decode([Coin].self, from: data) else {
+                print("DEBUG-> Failed to decode JSON: \(String(describing: datastring))")
+                return
+            }
+            
+            completion(coins)
+           
+            
+        }.resume()
+       
+    }
+    
+    func fetchPrice(coin: String, currency: String, completion: @escaping(Double) -> Void) {
+        let urlString = "https://api.coingecko.com/api/v3/simple/price?vs_currencies=\(currency)&ids=\(coin)"
+        guard let url = URL(string: urlString) else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("DEBUG-> Error fetching data: \(error.localizedDescription)")
+                //                self.errorMessage = error.localizedDescription
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                //                self.errorMessage = "Bad response"
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                //                self.errorMessage = "HTTP Error: \(httpResponse.statusCode)"
+                return
+            }
+            print("DEBUG-> HttpResponse Status Code: \(httpResponse.statusCode)")
+            guard let data = data else { return }
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+            guard let value = jsonObject[coin] as? [String: Double] else {
+                print("DEBUG-> Failed to get coin data from JSON \(jsonObject)")
+                return
+            }
+            guard let price = value[currency] else { return }
+            //                self.coin = coin.capitalized
+            //                self.price = "\(price)"
+            print("DEBUG: Price in service: \(price) for coin: \(coin) in currency: \(currency)")
+            completion(price)
+            
+            
+        }.resume()
+    }
+    
+}
