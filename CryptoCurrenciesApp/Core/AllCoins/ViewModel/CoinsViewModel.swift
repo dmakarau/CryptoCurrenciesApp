@@ -10,19 +10,24 @@ import Foundation
 class CoinsViewModel {
     
     var coins = [Coin]()
-   
+    var errorMessage: String?
     
     private let service = CoinDataService()
     
     init() {
-//        fetchPrice(of: "bitcoin")
         fetchCoins()
     }
     
     func fetchCoins() {
-        service.fetchCoins { coins in
+  
+        service.fetchCoinsWithResult { [weak self] result in
             DispatchQueue.main.async {
-                self.coins = coins
+                switch result {
+                case .success(let coins):
+                    self?.coins = coins
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                }
             }
         }
     }
