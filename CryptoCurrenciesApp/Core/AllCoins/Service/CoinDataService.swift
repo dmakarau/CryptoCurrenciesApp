@@ -10,6 +10,30 @@ import Foundation
 class CoinDataService {
     private let urlString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&sparkline=false&price_change_percentage=24h"
     
+    func fetchCoins() async throws -> [Coin] {
+        guard let url = URL(string: urlString) else { return [] }
+                
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw CoinAPIError.requestFailed(description: "Bad response")
+        }
+        guard httpResponse.statusCode == 200 else {
+            throw CoinAPIError.invalidStatusCode(code: httpResponse.statusCode)
+        }
+        do {
+            let coins = try JSONDecoder().decode([Coin].self, from: data)
+            return coins
+            
+        } catch {
+            print("DEBUG-> Error fetching coins: \(error)")
+            throw error as? CoinAPIError ?? .unknownError(error: error)
+        }
+    }
+}
+
+// MARK: - Completion Handling
+
+extension CoinDataService {
     func fetchCoinsWithResult(completion: @escaping (Result<[Coin], CoinAPIError>) -> Void) {
         guard let url = URL(string: urlString) else { return }
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -38,24 +62,6 @@ class CoinDataService {
                 print("DEBUG-> Failed to decode JSON witch error: \(error.localizedDescription), data: \(String(describing: datastring))")
                 completion(.failure(.jsonParsingError))
             }
-        }.resume()
-    }
-    
-    func fetchCoins(completion: @escaping ([Coin]?, Error?) -> Void) {
-        guard let url = URL(string: urlString) else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(nil, error)
-                return
-            }
-            guard let data = data else { return }
-            let datastring = String(data: data, encoding: .utf8)
-            
-            guard let coins = try? JSONDecoder().decode([Coin].self, from: data) else {
-                print("DEBUG-> Failed to decode JSON: \(String(describing: datastring))")
-                return
-            }
-            completion(coins, nil)
         }.resume()
     }
     
@@ -91,5 +97,4 @@ class CoinDataService {
             
         }.resume()
     }
-    
 }
