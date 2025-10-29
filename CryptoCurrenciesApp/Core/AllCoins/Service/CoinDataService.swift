@@ -10,6 +10,8 @@ import Foundation
 class CoinDataService {
     private let urlString = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&sparkline=false&price_change_percentage=24h"
     
+    
+    
     func fetchCoins() async throws -> [Coin] {
         guard let url = URL(string: urlString) else { return [] }
                 
@@ -28,6 +30,28 @@ class CoinDataService {
             print("DEBUG-> Error fetching coins: \(error)")
             throw error as? CoinAPIError ?? .unknownError(error: error)
         }
+    }
+    
+    func fetchCoinDetails(id: String) async throws -> CoinDetails? {
+        let urlDetails = "https://api.coingecko.com/api/v3/coins/\(id)?localization=false"
+        guard let url = URL(string: urlDetails) else { return nil }
+                
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw CoinAPIError.requestFailed(description: "Bad response")
+        }
+        guard httpResponse.statusCode == 200 else {
+            throw CoinAPIError.invalidStatusCode(code: httpResponse.statusCode)
+        }
+        do {
+            let details = try JSONDecoder().decode(CoinDetails.self, from: data)
+            return details
+            
+        } catch {
+            print("DEBUG-> Error fetching coins: \(error)")
+            throw error as? CoinAPIError ?? .unknownError(error: error)
+        }
+        
     }
 }
 
