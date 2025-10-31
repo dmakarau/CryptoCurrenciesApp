@@ -19,8 +19,7 @@ final class CoinDetailsViewModel {
     
     func fetchCoinDetails(for coinID: String) async {
         do {
-            let details =  try await service.fetchCoinDetails(id: coinID)
-            self.coinDetails = details
+            self.coinDetails = try await service.fetchCoinDetails(id: coinID)
         } catch {
             print("DEBUG: Failed to fetch coin details: \(error)")
         }
