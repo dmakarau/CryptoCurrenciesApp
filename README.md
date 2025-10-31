@@ -1,6 +1,6 @@
 # CryptoCurrenciesApp
 
-A comprehensive iOS application built to demonstrate modern networking patterns and API integration in Swift. This project showcases cryptocurrency data fetching from the CoinGecko API using clean architecture principles and modern SwiftUI practices.
+A comprehensive iOS application built to demonstrate modern networking patterns, caching strategies, and API integration in Swift. This project showcases cryptocurrency data fetching from the CoinGecko API using clean architecture principles, intelligent caching, and modern SwiftUI practices.
 
 <div align="center">
   <img src="https://img.shields.io/badge/SWIFT-5.9+-FA7343?style=for-the-badge&logo=swift&logoColor=white" alt="Swift">
