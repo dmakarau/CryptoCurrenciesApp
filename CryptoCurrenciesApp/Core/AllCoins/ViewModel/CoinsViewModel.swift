@@ -12,9 +12,10 @@ class CoinsViewModel {
     var coins = [Coin]()
     var errorMessage: String?
     
-    private let service = CoinDataService()
+    private let service: CoinDataService
     
-    init() {
+    init(service: CoinDataService) {
+        self.service = service
         Task { await fetchCoins() }
     }
     

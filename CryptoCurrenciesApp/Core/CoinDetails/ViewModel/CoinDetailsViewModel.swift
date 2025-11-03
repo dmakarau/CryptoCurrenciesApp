@@ -10,11 +10,12 @@ import Foundation
 @Observable
 final class CoinDetailsViewModel {
     var coinDetails: CoinDetails?
-    private let service = CoinDataService()
+    private let service: CoinDataService
     private let coinId: String
     
-    init(coinId: String) {
+    init(coinId: String, service: CoinDataService) {
         self.coinId = coinId
+        self.service = service
     }
     
     func fetchCoinDetails(for coinID: String) async {

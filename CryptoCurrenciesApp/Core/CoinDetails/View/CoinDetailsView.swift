@@ -11,9 +11,9 @@ struct CoinDetailsView: View {
     let coin: Coin
     let viewModel: CoinDetailsViewModel
     
-    init(coin: Coin) {
+    init(coin: Coin, serivce: CoinDataService) {
         self.coin = coin
-        self.viewModel = CoinDetailsViewModel(coinId: coin.id)
+        self.viewModel = CoinDetailsViewModel(coinId: coin.id, service: CoinDataService())
     }
     
     var body: some View {
