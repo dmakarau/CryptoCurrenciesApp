@@ -11,7 +11,7 @@ struct CoinDetailsView: View {
     let coin: Coin
     let viewModel: CoinDetailsViewModel
     
-    init(coin: Coin, serivce: CoinDataService) {
+    init(coin: Coin, serivce: CoinServiceProtocol) {
         self.coin = coin
         self.viewModel = CoinDetailsViewModel(coinId: coin.id, service: CoinDataService())
     }

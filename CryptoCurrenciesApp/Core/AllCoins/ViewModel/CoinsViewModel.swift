@@ -12,9 +12,9 @@ class CoinsViewModel {
     var coins = [Coin]()
     var errorMessage: String?
     
-    private let service: CoinDataService
+    private let service: CoinServiceProtocol
     
-    init(service: CoinDataService) {
+    init(service: CoinServiceProtocol) {
         self.service = service
         Task { await fetchCoins() }
     }
@@ -28,16 +28,16 @@ class CoinsViewModel {
         }
     }
     
-    func fetchCoinsWithCompletionHandler() {
-        service.fetchCoinsWithResult { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let coins):
-                    self?.coins = coins
-                case .failure(let error):
-                    self?.errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
+//    func fetchCoinsWithCompletionHandler() {
+//        service.fetchCoinsWithResult { [weak self] result in
+//            DispatchQueue.main.async {
+//                switch result {
+//                case .success(let coins):
+//                    self?.coins = coins
+//                case .failure(let error):
+//                    self?.errorMessage = error.localizedDescription
+//                }
+//            }
+//        }
+//    }
 }
