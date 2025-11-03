@@ -20,15 +20,17 @@ A comprehensive iOS application built to demonstrate modern networking patterns,
 
 ## Project Overview
 
-This application serves as a practical learning resource for iOS developers looking to understand networking fundamentals, API integration, and modern Swift concurrency patterns. The app displays real-time cryptocurrency market data and detailed coin information through a clean, intuitive interface.
+This application serves as a practical learning resource for iOS developers looking to understand networking fundamentals, API integration, and modern Swift concurrency patterns. The app displays real-time cryptocurrency market data with intelligent pagination and detailed coin information through a clean, intuitive interface.
 
 ## Features
 
-- **Real-time Cryptocurrency Data**: Fetches live market data for top 20 cryptocurrencies
+- **Real-time Cryptocurrency Data**: Fetches live market data from CoinGecko API
+- **Intelligent Pagination**: Automatically loads 20 coins per page as users scroll to the bottom
 - **Detailed Coin Information**: Navigate to detailed views with comprehensive coin descriptions
 - **Smart Caching**: Implements intelligent caching for coin details to reduce API calls
 - **Modern Networking**: Demonstrates both async/await and completion handler patterns
 - **Clean Architecture**: MVVM pattern with clear separation of concerns
+- **Protocol-Based Design**: Uses protocols for better testability and flexibility
 - **Error Handling**: Comprehensive error management with user-friendly messages
 
 ## Technical Implementation
@@ -39,13 +41,21 @@ The project follows the MVVM (Model-View-ViewModel) architectural pattern:
 - **Views**: SwiftUI-based interface with `ContentView` and `CoinDetailsView`
 - **ViewModels**: `CoinsViewModel` and `CoinDetailsViewModel`
 
+### Pagination Implementation
+The app features a sophisticated page-based pagination system:
+- **Page-based Loading**: Fetches 20 coins per page using CoinGecko's pagination parameters
+- **Automatic Triggering**: Detects when users scroll to the last visible coin using `.onAppear`
+- **Progressive Data**: New coins are appended to the existing list for seamless browsing
+- **State Management**: Maintains current page counter in the `CoinDataService`
+- **Clean Integration**: Pagination logic is embedded in the service layer, keeping views simple
+
 ### Networking Layer
 The networking implementation showcases multiple approaches:
 
-1. **Protocol-Oriented Design**: `HTTPDataDownloader` protocol provides a flexible foundation
-2. **Service Layer**: `CoinDataService` handles all API communications
+1. **Protocol-Oriented Design**: `CoinServiceProtocol` provides a clean interface for data fetching
+2. **Service Layer**: `CoinDataService` handles all API communications with pagination support
 3. **Modern Concurrency**: Utilizes Swift's async/await for clean asynchronous code
-4. **Legacy Support**: Includes completion handler examples for educational purposes
+4. **Flexible Architecture**: Protocol-based design allows for easy testing with mock services
 
 ### Caching Strategy
 Implemented a simple but effective caching mechanism through `CoinDetailsCache` using NSCache to:
@@ -81,19 +91,21 @@ No external dependencies or API keys required - the app uses the free tier of th
 
 This project demonstrates:
 - **Modern Swift Networking**: URLSession with async/await patterns
+- **Pagination Techniques**: Page-based loading with automatic triggering mechanisms
 - **Protocol-Oriented Programming**: Clean, testable networking abstractions
 - **SwiftUI Navigation**: NavigationStack and destination-based routing
 - **Data Persistence**: NSCache implementation for temporary storage
 - **Error Handling**: Robust error management strategies
 - **Reactive Programming**: Observable objects and data binding
+- **Performance Optimization**: Efficient data loading and memory management
 
 ## API Integration
 
 The application integrates with the [CoinGecko API](https://www.coingecko.com/en/api) endpoints:
-- `/coins/markets` - Cryptocurrency market data
+- `/coins/markets` - Cryptocurrency market data with pagination support (`page` and `per_page` parameters)
 - `/coins/{id}` - Detailed coin information
 
-All API interactions are handled through the service layer with proper error handling and response validation.
+All API interactions are handled through the service layer with proper error handling, response validation, and intelligent pagination management.
 
 ## Project Structure
 
@@ -152,4 +164,4 @@ This project is available under the MIT License. See the [LICENSE](LICENSE) file
 
 ---
 
-Built as a learning resource for iOS networking and modern Swift development patterns.
+Built as a learning resource for iOS networking, pagination patterns, and modern Swift development techniques.

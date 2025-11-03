@@ -37,11 +37,17 @@ struct ContentView: View {
                                 Text(coin.symbol.uppercased())
                             }
                         }
-                        .font(.footnote)
+                        .onAppear {
+                            if coin == viewModel.coins.last {
+                                Task { await viewModel.fetchCoins() }
+                            }
+                        }
                     }
-                    
+                    .font(.footnote)
                 }
+                
             }
+            
             .navigationDestination(for: Coin.self, destination: { coin in
                 CoinDetailsView(coin: coin, serivce: service)
             })
@@ -51,7 +57,6 @@ struct ContentView: View {
                 }
             }
         }
-        .padding()
     }
 }
 
